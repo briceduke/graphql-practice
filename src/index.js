@@ -1,19 +1,28 @@
-const {ApolloServer} = require('apollo-server')
-const typeDefs = require('./typedefs')
-const resolvers = require('./resolvers')
-const {createToken, getUserFromToken} = require('./auth')
-const db = require('./db')
+const { ApolloServer, AuthenticationError } = require("apollo-server");
+const typeDefs = require("./typedefs");
+const resolvers = require("./resolvers");
+const { createToken, getUserFromToken } = require("./auth");
+const db = require("./db");
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context({req}) {
-    const token = req.headers.authorization
-    const user = getUserFromToken(token)
-    return {...db, user, createToken}
-  }
-})
+  context({ req, connection }) {
+    if (connection) return { ...connection.context, ...db };
+    const token = req.headers.authorization;
+    const user = getUserFromToken(token);
+    return { ...db, user, createToken };
+  },
+  subscriptions: {
+    onConnect(connectionParams) {
+      const token = connectionParams.Authorization;
+      const user = getUserFromToken(token);
+      if (!user) throw new AuthenticationError("Login!");
+      return { user };
+    },
+  },
+});
 
-server.listen(4000).then(({url}) => {
-  console.log(`🚀 Server ready at ${url}`)
-})
+server.listen(4000).then(({ url }) => {
+  console.log(`🚀 Server ready at ${url}`);
+});

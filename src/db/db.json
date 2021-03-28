@@ -8,6 +8,15 @@
       "avatar": "http",
       "createdAt": 1571213104370,
       "id": "Z2hlvDmLOSRZGebC_Z_aA"
+    },
+    {
+      "email": "bricewduke@gmail.com",
+      "password": "w4r8m8m5",
+      "role": "ADMIN",
+      "verified": false,
+      "avatar": "http",
+      "createdAt": 1616891821353,
+      "id": "BJqunffuvL8zMiCgqlt8j"
     }
   ],
   "posts": [],
