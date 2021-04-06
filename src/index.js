@@ -2,11 +2,21 @@ const { ApolloServer, AuthenticationError } = require("apollo-server");
 const typeDefs = require("./typedefs");
 const resolvers = require("./resolvers");
 const { createToken, getUserFromToken } = require("./auth");
+const {
+  formatTimeDirective,
+  AuthorizationDirective,
+  AuthenticationDirective,
+} = require("./directives");
 const db = require("./db");
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  schemaDirectives: {
+    formatTime: formatTimeDirective,
+    authorized: AuthorizationDirective,
+    authenticated: AuthenticationDirective,
+  },
   context({ req, connection }) {
     if (connection) return { ...connection.context, ...db };
     const token = req.headers.authorization;
